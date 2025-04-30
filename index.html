@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Attack Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 30px auto;
+            padding: 20px;
+            width: 50%;
+            text-align: left;
+        }
+        h1 {
+            color: #007BFF;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            color: #007BFF;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007BFF;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            margin: 10px auto;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>Heart Attack Predictor</header>
+
+    <div class="container">
+        <h1>Predict Your Heart Attack Risk</h1>
+        <form id="prediction-form">
+            <label for="feature1">Age (Age of the patient):</label>
+            <input type="number" id="feature1" name="age" required>
+            
+            <label for="feature2">Sex (male = 0, female = 1):</label>
+            <input type="number" id="feature2" name="sex" required>
+            
+            <label for="feature3">Chest Pain Type(0 = Typical Angina, 1 = Atypical Angina, 2 = Non-anginal Pain, 3 = Asymptomatic):</label>
+            <input type="number" id="feature3" name="cp" required>
+            
+            <label for="feature4">Resting Blood Pressure (Resting blood pressure (mm Hg)):</label>
+            <input type="number" id="feature4" name="trtbps" required>
+            
+            <label for="feature5">Cholesterol (mg/dl):</label>
+            <input type="number" id="feature5" name="chol" required>
+            
+            <label for="feature6">Fasting Blood Sugar (> 120 mg/dl) (1 = True, 0 = False):</label>
+            <input type="number" id="feature6" name="fbs" required>
+            
+            <label for="feature7">Resting ECG Results (0 = Normal, 1 = ST-T wave normality, 2 = Left ventricular hypertrophy):</label>
+            <input type="number" id="feature7" name="restecg" required>
+            
+            <label for="feature8">Max Heart Rate Achieved:</label>
+            <input type="number" id="feature8" name="thalach" required>
+            
+            <label for="feature9">Previous Peak:</label>
+            <input type="number" id="feature9" name="oldpeak" required>
+            
+            <label for="feature10">Slope:</label>
+            <input type="number" id="feature10" name="slp" required>
+            
+            <label for="feature11">Number of Major Vessels:</label>
+            <input type="number" id="feature11" name="caa" required>
+            
+            <label for="feature12">Thalium Stress Test Result (0 to 3, whole numbers only):</label>
+            <input type="number" id="feature12" name="thall" required>
+            
+            <label for="feature13">Exercise Induced Angina (1 = True, 0 = False):</label>
+            <input type="number" id="feature13" name="exng" required>
+            
+            <button type="submit">Predict</button>
+        </form>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Loading model, please wait...</p>
+        </div>
+
+        <div id="result"></div>
+
+        <a href="/" class="back-button">← Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById("prediction-form").addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            // Show loading spinner
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("result").innerText = "";
+
+            const data = {
+                age: document.getElementById("feature1").value,
+                sex: document.getElementById("feature2").value,
+                cp: document.getElementById("feature3").value,
+                trtbps: document.getElementById("feature4").value,
+                chol: document.getElementById("feature5").value,
+                fbs: document.getElementById("feature6").value,
+                restecg: document.getElementById("feature7").value,
+                thalach: document.getElementById("feature8").value,
+                exng: document.getElementById("feature13").value,
+                oldpeak: document.getElementById("feature9").value,
+                slp: document.getElementById("feature10").value,
+                caa: document.getElementById("feature11").value,
+                thall: document.getElementById("feature12").value,
+            };
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                document.getElementById("loading").style.display = "none";
+
+                if (response.ok) {
+                    if (result.prediction === 1) {
+                        const textToShow = "You are at high risk to have a heart Attack!";
+                        document.getElementById("result").innerText = `Prediction: ${textToShow}`;
+                    } else {
+                        const textToShow = "You are at low risk to have a heart Attack!";
+                        document.getElementById("result").innerText = `Prediction: ${textToShow}`;
+                    }
+                } else {
+                    document.getElementById("result").innerText = `Error: ${result.error}`;
+                }
+            } catch (error) {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("result").innerText = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
