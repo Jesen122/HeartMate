@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daftar Konsultasi</title>
+</head>
+<body>
+  <h1>Daftar Konsultasi</h1>
+  <a href="{{ url_for('tanya') }}">Tanya Dokter</a>
+  <ul>
+    {% for k in konsultasi_list %}
+      <li>
+        <strong>{{ k[1] }}</strong>: {{ k[2] }}<br>
+        Jawaban: {{ k[3] if k[3] else 'Belum dijawab' }}
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

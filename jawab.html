@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jawab Pertanyaan</title>
+</head>
+<body>
+  <h1>Jawab Pertanyaan</h1>
+  <p><strong>{{ konsultasi.nama_pasien }}</strong>: {{ konsultasi.pertanyaan }}</p>
+  <form method="POST">
+    Jawaban:<br>
+    <textarea name="jawaban" required></textarea><br><br>
+    <button type="submit">Kirim Jawaban</button>
+  </form>
+</body>
+</html>
