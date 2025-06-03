@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Dokter</title>
+</head>
+<body>
+    <h1>Login Dokter</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, msg in messages %}
+            <li style="color: {% if category == 'error' %}red{% else %}green{% endif %};">{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <form method="POST">
+        Username:<br>
+        <input type="text" name="username" required><br><br>
+        Password:<br>
+        <input type="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
